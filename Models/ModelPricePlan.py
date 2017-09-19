@@ -31,6 +31,13 @@ class PricePlan(db.Model):
     	db.put(pplans)
 
     @staticmethod
+    def create(name=None, amount=None, level=None, active=None):
+    	name = utils.to_upper(name)
+    	pplan = PricePlan(name=name, amount=amount, level=level, active=active)
+    	pplan.put()
+    	logging.info("New Plan %s %s" % (name, amount))
+
+    @staticmethod
     def fetch(key=None, name=None):
     	if key:
     		return PricePlan.get(key)
@@ -58,4 +65,4 @@ class PricePlan(db.Model):
     	return all_active > 0
 
     def __str__(self):
-        return "%s" % (self.name)
+        return "%s->%s" % (self.name, self.amount)

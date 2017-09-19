@@ -23,13 +23,19 @@ class PaymentPlan(db.Model):
                                    subscription_period=subscription_period)
         payment_plan.put()
 
-    def update(self, name=name, grace_period=None, subscription_period=None, put=True):
+    def update(self, default=None, name=None, grace_period=None, subscription_period=None,
+               put=True):
         if name:
             self.name = name
         if grace_period:
             self.grace_period = grace_period
         if subscription_period:
             self.subscription_period = subscription_period
+        if default:
+            last_default = PaymentPlan.get_default_plan()
+            if last_default:
+                last_default.deactivate_default()
+            self.default = default
         if put:
             self.put
 
@@ -38,18 +44,28 @@ class PaymentPlan(db.Model):
         if key:
             return PaymentPlan.get(key)
 
-    def __get_expiry(self, initial=None):
-        expiry = datetime.now()
-        if not initial:
-            expiry = expiry + timedelta(days=self.subscription_period)
+    @staticmethod
+    def get_default_plan():
+        plans = PaymentPlan.all().fetch(100)
+        plan = filter(lambda x: x.default == True, plans)
+        return plan.pop() if plan else None
+
+    def deactivate_default(self):
+        self.active = False
+        self.put()
+
+    def __get_expiry(self, expiry=None):
+        if not expiry:
+            expiry = datetime.now()
+        expiry = expiry + timedelta(days=self.subscription_period)
         return expiry
 
     def __get_cutoff(self, expiry=None):
-        if not expiry:
-            expiry = datetime.now()
-        cutoff = expiry + timedelta(days=self.grace_period)
+        if expiry:
+            cutoff = expiry + timedelta(days=self.grace_period)
+            return cutoff
 
-    def get_expiry_and_cutoff(self, initial=None):
-        expiry = self.__get_expiry(initial)
+    def get_expiry_and_cutoff(self, expiry=None):
+        expiry = self.__get_expiry(expiry)
         cutoff = self.__get_cutoff(expiry)
         return expiry, cutoff

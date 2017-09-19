@@ -24,7 +24,7 @@ class Account(db.Model):
     def create(name=None, price_plan=None, email=None, payment_plan=None):
     	if all([name, price_plan, email]):
     		name = utils.to_upper(name)
-    		expiry_date, cutoff_date = payment_plan.get_expiry_and_cutoff(initial=True)
+    		expiry_date, cutoff_date = payment_plan.get_expiry_and_cutoff()
     		acc = Account(name=name, price_plan=price_plan, email=email, expiry_date=expiry_date,
     		              cutoff_date=cutoff_date, payment_plan=payment_plan)
     		acc.put()
@@ -35,7 +35,6 @@ class Account(db.Model):
     def fetch(acc_key):
     	if acc_key:
     		return Account.get(acc_key)
-
 
     def update(self, name=None, priceplan=None, email=None, active=None, cutoff=None,
                expiry=None, put=True):
@@ -65,3 +64,4 @@ class Account(db.Model):
 
     def __str__(self):
         return "%s" % (self.name)
+        
