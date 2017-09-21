@@ -19,6 +19,12 @@ memcache_client = memcache.Client()
 # The line below is a quick fix
 os.environ['TZ'] = 'UTC'
 
+
+config = {}
+config['webapp2_extras.sessions'] = {
+    'secret_key': 'shing-web-backend-key',
+}
+
 logging.getLogger().setLevel(logging.DEBUG)
 
 apis = []
@@ -26,4 +32,4 @@ apis.extend(user_api)
 apis.extend(account_api)
 
 
-app = WSGIApplication( apis , debug=True)
+app = WSGIApplication( apis , debug=True, config=config)
