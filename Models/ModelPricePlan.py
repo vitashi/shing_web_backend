@@ -1,6 +1,9 @@
 import json
+import logging
 
 import utils
+
+from datetime import datetime
 
 from google.appengine.api import mail, memcache, search, urlfetch, images
 from google.appengine.ext import blobstore, ndb, db
@@ -14,6 +17,7 @@ class PricePlan(db.Model):
     amount = db.IntegerProperty()
     level = db.IntegerProperty()
     create_date = db.DateTimeProperty(auto_now_add=True)
+    update_date = db.DateTimeProperty(auto_now_add=True)
     active = db.BooleanProperty(default=True, indexed=True)
 
     @staticmethod
@@ -31,9 +35,9 @@ class PricePlan(db.Model):
     	db.put(pplans)
 
     @staticmethod
-    def create(name=None, amount=None, level=None, active=None):
+    def create(name=None, amount=None, level=None):
     	name = utils.to_upper(name)
-    	pplan = PricePlan(name=name, amount=amount, level=level, active=active)
+    	pplan = PricePlan(name=name, amount=amount, level=level)
     	pplan.put()
     	logging.info("New Plan %s %s" % (name, amount))
 
@@ -52,6 +56,8 @@ class PricePlan(db.Model):
     		self.active = active
     	if amount:
     		self.amount = amount
+        if any([name, active, amount]):
+            self.update_date = datetime.now()
 
     @staticmethod
     def get_all_active():

@@ -10,6 +10,8 @@ from webapp2_extras.routes import RedirectRoute
 
 from Apis.AccountAPI import account_api
 from Apis.UserAPI import user_api
+from Apis.PaymentPlanAPI import payment_plan_api
+from Apis.PricePlanAPI import price_plan_api
 
 memcache_client = memcache.Client()
 
@@ -30,6 +32,8 @@ logging.getLogger().setLevel(logging.DEBUG)
 apis = []
 apis.extend(user_api)
 apis.extend(account_api)
+apis.extend(payment_plan_api)
+apis.extend(price_plan_api)
 
 
-app = WSGIApplication( apis , debug=True, config=config)
+app = WSGIApplication(apis, debug=True, config=config)

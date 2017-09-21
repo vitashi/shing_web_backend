@@ -14,7 +14,7 @@ class PaymentPlan(db.Model):
     grace_period = db.IntegerProperty()
     subscription_period = db.IntegerProperty(default=1)
 
-    def __str__(self)
+    def __str__(self):
         return "%s" % (self.name)
 
     @staticmethod

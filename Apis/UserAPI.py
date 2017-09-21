@@ -1,4 +1,6 @@
 
+import logging
+
 import utils
 
 from webapp2 import Route
@@ -11,12 +13,12 @@ class User(ShingHandler):
 
 	def create(self):
 		user_name = self.request.get('user_name')
-		account_name = self.request.get('account_name')
+		account = self.request.get('account')
 		email = self.request.get('email')
 		password = self.request.get('password')
-		logging.info("Creating account %s" % name)
-		if all([name, email, password]):
-			name = utils.to_upper(name)
+		logging.info("Creating user %s" % user_name)
+		if all([user_name, account_name, email, password]):
+			name = utils.to_upper(user_name)
 		else:
 			print "missing mandatory field"
 
